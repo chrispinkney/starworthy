@@ -16,3 +16,9 @@
 		<li>{user.email}</li>
 	{/each}
 </ul>
+
+<style lang="postcss">
+	:global(html) {
+		background-color: theme(colors.zinc.700);
+	}
+</style>
