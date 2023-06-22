@@ -4,7 +4,7 @@ import { starsController, ping } from '~/controllers/stars';
 type Routes = {
   method: HTTPMethods;
   url: string;
-  handler: () => Promise<string | { email: string }[]>;
+  handler: () => Promise<string | undefined | { email: string }[]>;
   schema: object;
 };
 
