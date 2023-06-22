@@ -16,9 +16,11 @@
   "dependencies": {
     "@prisma/client": "4.16.0",
     "dotenv": "16.3.1",
-    "fastify": "4.18.0"
+    "fastify": "4.18.0",
+    "octokit": "^2.1.0"
   },
   "devDependencies": {
+    "@octokit/types": "^10.0.0",
     "@types/node": "20.3.1",
     "@typescript-eslint/eslint-plugin": "5.60.0",
     "@typescript-eslint/parser": "5.60.0",
