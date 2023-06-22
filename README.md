@@ -11,7 +11,7 @@
 - `npm run db:migrate`
 
 # Running the project
-- `cd /ui`
+- `cd /web`
 - `npm run dev`
 - `cd /api`
 - `npm run dev`
