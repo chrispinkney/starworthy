@@ -1,21 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
-	let stars: Star[] = [];
-
-	onMount(async () => {
-		const response = await fetch('http://localhost:7000/v1/users');
-		stars = await response.json();
-	});
+	export let data;
+	const {stars} = data;
 </script>
 
 <h1>Stars</h1>
-
-<ul>
-	{#each stars as star}
+<ul> 
+	{#each stars as star} 
 		<li>{star.name}</li>
 		<li>{@html star.description ? star.description : '<i>Project Has No Description</i>'}</li>
-		<li><a href={star.url}>Link</a></li>
+		<li><a href={star.url}>Link</a></li> 
 		<hr/>
 	{/each}
 </ul>
