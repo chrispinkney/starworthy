@@ -1,5 +1,5 @@
 import { HTTPMethods } from 'fastify';
-import { starsController, ping } from '~/controllers/stars';
+import { starsController, ping } from '../controllers/stars';
 
 type Routes = {
   method: HTTPMethods;

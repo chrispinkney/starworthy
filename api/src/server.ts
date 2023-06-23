@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import 'dotenv/config';
-import routes from '~/routes/routes';
+import routes from './routes/routes';
 
 const port: number = parseInt(process.env.port || '7000', 10);
 

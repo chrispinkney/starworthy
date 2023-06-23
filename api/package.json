@@ -2,15 +2,15 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.ts",
+  "main": "src/server.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx watch src/app.ts",
+		"start": "node ./dist/server.js",
+		"build": "tsc",
+    "dev": "tsx watch src/server.ts",
     "db:migrate": "prisma migrate dev --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\""
   },
-  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {
