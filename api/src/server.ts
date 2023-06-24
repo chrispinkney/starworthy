@@ -3,11 +3,12 @@ import cors from '@fastify/cors';
 import 'dotenv/config';
 import routes from './routes/routes';
 
+import { logger, errorLogger } from './decorators/logger';
+
+const host = '0.0.0.0';
 const port: number = parseInt(process.env.port || '7000', 10);
 
-const fastify = Fastify({
-  logger: true,
-});
+const fastify = Fastify();
 
 fastify.register(cors, {
   origin: true,
@@ -19,14 +20,16 @@ fastify.register(
     app.route(routes[1]); // ping handler
     done();
   },
-  { prefix: '/v1/users' },
+  { prefix: '/users' },
 );
 
 const server = async () => {
   try {
-    await fastify.listen({ port, host: '0.0.0.0' });
-  } catch (err) {
-    fastify.log.error(err);
+    logger.log(`Server is listening on ${host}:${port}`);
+    await fastify.listen({ port, host });
+  } catch (e) {
+    errorLogger.log(e.message);
+    fastify.log.error(e); // remove?
     process.exit(1);
   }
 };

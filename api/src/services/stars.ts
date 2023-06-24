@@ -1,4 +1,5 @@
 import { Octokit } from 'octokit';
+import { performanceLogger, errorLogger } from '../decorators/logger';
 
 const stars = async (): Promise<string> => {
   const octokit = new Octokit({
@@ -6,6 +7,7 @@ const stars = async (): Promise<string> => {
   });
 
   const perPage = 100;
+  performanceLogger.startNow();
 
   try {
     const res = await octokit.request('GET /user/starred', {
@@ -55,9 +57,11 @@ const stars = async (): Promise<string> => {
         });
       });
     }
+
+    performanceLogger.log();
     return JSON.stringify(starredRepos);
   } catch (e) {
-    console.log(`Error: ${e.messsage}`);
+    errorLogger.log(`Error in stars service: ${e.message}`);
     return '';
   }
 };

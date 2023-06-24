@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { errorLogger } from '../decorators/logger';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -18,7 +19,8 @@ const findAll = async () => {
 
     return users;
   } catch (e) {
-    throw Error();
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
   }
 };
 
