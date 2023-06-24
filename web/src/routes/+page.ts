@@ -1,6 +1,9 @@
+import { env } from '$env/dynamic/public';
+
 export async function load({ fetch }) {
 	try {
-		const res = await fetch('http://localhost:7000/v1/users');
+		console.log(env.PUBLIC_api_url);
+		const res = await fetch(env.PUBLIC_api_url || 'http://localhost:7000/v1/users');
 		const stars: Star = await res.json();
 
 		return {
