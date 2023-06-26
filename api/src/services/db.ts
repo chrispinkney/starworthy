@@ -4,7 +4,7 @@ import { errorLogger } from '../decorators/logger';
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.dbhost,
+      url: process.env.POSTGRES_PRISMA_URL,
     },
   },
 });

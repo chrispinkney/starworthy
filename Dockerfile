@@ -14,12 +14,13 @@ COPY api/prisma prisma
 # Context: Dependencies
 FROM build AS dependencies
 
-ARG dbhost
+ARG POSTGRES_PRISMA_URL
+ARG POSTGRES_URL_NON_POOLING
 
 # Install Modules
 RUN npm install
 RUN npm install -g prisma
-RUN npm run db:migrate
+RUN npm run db:generate
 
 # -------------------------------------
 # Context: Builder
