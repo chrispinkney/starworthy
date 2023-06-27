@@ -3,3 +3,6 @@
 *.js linguist-detectable=false
 *.config.js linguist-detectable=false
 *.cjs linguist-detectable=false
+web/.husky/* linguist-vendored
+api/.husky/* linguist-vendored
+api/.husky/* linguist-vendored
