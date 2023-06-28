@@ -7,8 +7,8 @@
     "start": "node ./dist/server.js",
     "build": "tsc",
     "dev": "tsx watch src/server.ts",
-    "db:generate": "prisma generate --schema=prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev --schema=prisma/schema.prisma && prisma generate --schema=prisma/schema.prisma",
+    "db:generate": "npx --yes prisma generate --schema=prisma/schema.prisma",
+    "db:migrate": "npx --yes prisma migrate dev --schema=prisma/schema.prisma",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "prepare": "cd ../ && husky install api/.husky"
