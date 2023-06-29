@@ -1,4 +1,4 @@
-import { fetchRepos } from '../services/stars';
+import { fetchRepos } from '../services/repos';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
 const getRepos = async (): Promise<Repo[] | undefined> => {

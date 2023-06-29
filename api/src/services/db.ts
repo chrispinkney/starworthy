@@ -24,7 +24,7 @@ export const findUser = async (username: string) => {
   }
 };
 
-export const findRepos = async (userId: number) => {
+export const readRepos = async (userId: number) => {
   try {
     const repos = await db.repo.findMany({
       where: { userId },
@@ -56,7 +56,7 @@ export const writeUser = async (username: string) => {
 
 export const writeRepos = async (repos: Repo[], id: number) => {
   try {
-    const setRepos = await db.repo.createMany({
+    return await db.repo.createMany({
       data: repos.map((repo) => ({
         repo_id: repo.repoId,
         name: repo.name,
@@ -70,8 +70,6 @@ export const writeRepos = async (repos: Repo[], id: number) => {
       })),
       skipDuplicates: true,
     });
-
-    return setRepos;
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;

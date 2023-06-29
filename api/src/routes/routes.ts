@@ -1,6 +1,6 @@
 import { HTTPMethods } from 'fastify';
-import getRepos from '../controllers/stars';
-import getUser from '../controllers/user';
+import getRepos from '../controllers/repos';
+import getUsername from '../controllers/user';
 
 type Routes = {
   method: HTTPMethods;
@@ -19,7 +19,7 @@ const routes: Routes[] = [
   {
     method: 'GET',
     url: '/user',
-    handler: getUser,
+    handler: getUsername,
     schema: {},
   },
 ];

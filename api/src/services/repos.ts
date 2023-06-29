@@ -4,12 +4,12 @@ import {
   errorLogger,
   userActionLogger,
 } from '../decorators/logger';
-import { findRepos, writeUser, writeRepos, findUser } from './db';
-import fetchUser from './user';
+import { readRepos, writeUser, writeRepos, findUser } from './db';
+import fetchUser from './github';
 
-export const stars = async (): Promise<GitHubRepo[]> => {
+export const getRepos = async (): Promise<GitHubRepo[]> => {
   const octokit = new Octokit({
-    auth: process.env.github,
+    auth: process.env.GITHUB,
   });
 
   const perPage = 100;
@@ -77,20 +77,32 @@ export const stars = async (): Promise<GitHubRepo[]> => {
 export const fetchRepos = async (): Promise<Repo[] | undefined> => {
   userActionLogger.log('Stars Controller');
 
-  // get username based on token from github api
-  const user = await fetchUser();
+  const username = await fetchUser();
+  const user = await findUser(username);
 
-  // if the user doesn't exist in db: store username, pull repos from api and store in db
-  // otherwise pull from api and store in db if last sync time is >1h
-  const userExistsInDb = await findUser(user);
-  if (!userExistsInDb) await writeUser(user);
-
-  let starredRepos: GitHubRepo[] = [];
-  if (!userExistsInDb) {
-    starredRepos = await stars();
-    await writeRepos(starredRepos, userExistsInDb!.id);
+  if (user) {
+    return readRepos(user.id);
   }
-  const repos = await findRepos(userExistsInDb!.id);
 
-  return repos;
+  return undefined;
 };
+
+export const storeRepos = async () => {
+  userActionLogger.log('Storing repos to db');
+
+  const username = await fetchUser();
+  let user = await findUser(username);
+
+  if (!user) {
+    user = await writeUser(username);
+  }
+
+  const starredRepos = await getRepos();
+
+  if (user) {
+    await writeRepos(starredRepos, user.id);
+  }
+};
+
+// store repos immediately upon start up if in production
+if (process.env.NODE_ENV === 'production') storeRepos();
