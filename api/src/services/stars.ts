@@ -1,7 +1,13 @@
 import { Octokit } from 'octokit';
-import { performanceLogger, errorLogger } from '../decorators/logger';
+import {
+  performanceLogger,
+  errorLogger,
+  userActionLogger,
+} from '../decorators/logger';
+import { findUser, writeUser, writeRepos } from './db';
+import fetchUser from './user';
 
-const stars = async (): Promise<string> => {
+export const stars = async (): Promise<GitHubRepo[]> => {
   const octokit = new Octokit({
     auth: process.env.github,
   });
@@ -19,7 +25,8 @@ const stars = async (): Promise<string> => {
 
     const regex = /&page=[0-9]*/g;
     const pageQuery = res.headers.link?.match(regex);
-    let starredRepos;
+
+    let starredRepos: GitHubRepo[] = [];
 
     if (pageQuery?.length === 2) {
       const starredCount = parseInt(
@@ -46,24 +53,46 @@ const stars = async (): Promise<string> => {
       promises.forEach((repoSet, j) => {
         repoSet.data.forEach((repo, i) => {
           starredRepos[(j * perPage + i) as number] = {
-            id: repo.id,
+            repoId: repo.id,
             name: repo.name,
             description: repo.description,
             stars: repo.stargazers_count,
             language: repo.language,
             issues: repo.open_issues_count,
             url: repo.html_url,
+            createdAt: repo.created_at,
           };
         });
       });
     }
 
     performanceLogger.log();
-    return JSON.stringify(starredRepos);
+    return starredRepos;
   } catch (e) {
     errorLogger.log(`Error in stars service: ${e.message}`);
-    return '';
+    return [];
   }
 };
 
-export default stars;
+export const fetchRepos = async (): Promise<Repo[] | undefined> => {
+  userActionLogger.log('Stars Controller');
+
+  // get username based on token from github api
+  const user = await fetchUser();
+
+  // if the user no exist in db store username, pull, and store repos in db
+  // otherwise pull from api and store in db if last sync time is >1h
+  const userExistsInDb = await findUser(user);
+  if (!userExistsInDb) await writeUser(user);
+
+  // get starredRepos from github api
+  const starredRepos = await stars();
+
+  // store repos in db
+  // store many repos with the userid of the user
+  if (userExistsInDb) {
+    await writeRepos(starredRepos, userExistsInDb.id);
+  }
+
+  return starredRepos;
+};

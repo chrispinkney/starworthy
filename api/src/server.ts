@@ -14,22 +14,18 @@ fastify.register(cors, {
   origin: true,
 });
 
-fastify.register(
-  (app, _, done) => {
-    app.route(routes[0]); // stars handler
-    app.route(routes[1]); // ping handler
-    done();
-  },
-  { prefix: '/users' },
-);
+fastify.register((app, _, done) => {
+  app.route(routes[0]); // stars handler
+  app.route(routes[1]); // user handler
+  done();
+});
 
 const server = async () => {
   try {
     logger.log(`Server is listening on ${host}:${port}`);
     await fastify.listen({ port, host });
   } catch (e) {
-    errorLogger.log(e.message);
-    fastify.log.error(e); // remove?
+    errorLogger.log(e);
     process.exit(1);
   }
 };

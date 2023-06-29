@@ -1,10 +1,11 @@
 import { HTTPMethods } from 'fastify';
-import { starsController, ping } from '../controllers/stars';
+import getRepos from '../controllers/stars';
+import getUser from '../controllers/user';
 
 type Routes = {
   method: HTTPMethods;
   url: string;
-  handler: () => Promise<string | undefined | { email: string }[]>;
+  handler: () => Promise<string | Repo[] | undefined>;
   schema: object;
 };
 
@@ -12,13 +13,13 @@ const routes: Routes[] = [
   {
     method: 'GET',
     url: '/',
-    handler: starsController,
+    handler: getRepos,
     schema: {},
   },
   {
     method: 'GET',
-    url: '/ping',
-    handler: ping,
+    url: '/user',
+    handler: getUser,
     schema: {},
   },
 ];
