@@ -4,7 +4,7 @@ import {
   errorLogger,
   userActionLogger,
 } from '../decorators/logger';
-import { findUser, writeUser, writeRepos } from './db';
+import { findRepos, writeUser, writeRepos, findUser } from './db';
 import fetchUser from './user';
 
 export const stars = async (): Promise<GitHubRepo[]> => {
@@ -80,19 +80,17 @@ export const fetchRepos = async (): Promise<Repo[] | undefined> => {
   // get username based on token from github api
   const user = await fetchUser();
 
-  // if the user no exist in db store username, pull, and store repos in db
+  // if the user doesn't exist in db: store username, pull repos from api and store in db
   // otherwise pull from api and store in db if last sync time is >1h
   const userExistsInDb = await findUser(user);
   if (!userExistsInDb) await writeUser(user);
 
-  // get starredRepos from github api
-  const starredRepos = await stars();
-
-  // store repos in db
-  // store many repos with the userid of the user
-  if (userExistsInDb) {
-    await writeRepos(starredRepos, userExistsInDb.id);
+  let starredRepos: GitHubRepo[] = [];
+  if (!userExistsInDb) {
+    starredRepos = await stars();
+    await writeRepos(starredRepos, userExistsInDb!.id);
   }
+  const repos = await findRepos(userExistsInDb!.id);
 
-  return starredRepos;
+  return repos;
 };

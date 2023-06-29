@@ -24,6 +24,21 @@ export const findUser = async (username: string) => {
   }
 };
 
+export const findRepos = async (userId: number) => {
+  try {
+    const repos = await db.repo.findMany({
+      where: { userId },
+    });
+
+    return repos;
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
+  } finally {
+    await db.$disconnect();
+  }
+};
+
 export const writeUser = async (username: string) => {
   try {
     const userToCreate = await db.user.create({
