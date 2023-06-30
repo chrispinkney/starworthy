@@ -4,7 +4,7 @@ import {
   errorLogger,
   userActionLogger,
 } from '../decorators/logger';
-import { readRepos, writeUser, writeRepos, findUser } from './db';
+import { readRepos, writeUser, writeRepos, findUser, deleteRepos } from './db';
 import fetchUser from './github';
 
 export const getRepos = async (): Promise<GitHubRepo[]> => {
@@ -87,6 +87,24 @@ export const fetchRepos = async (): Promise<Repo[] | undefined> => {
   return undefined;
 };
 
+export const removeRepos = async (
+  githubRepos: GitHubRepo[],
+  dbRepos: Repo[],
+) => {
+  if (dbRepos) {
+    const vercelRepoIds = dbRepos.map((dbObj) => dbObj.repo_id);
+    const githubRepoIds = githubRepos.map((dbObj) => dbObj.repoId);
+
+    const missingRepoIds = vercelRepoIds.filter(
+      (repoId: number) => !githubRepoIds.includes(repoId),
+    );
+
+    if (missingRepoIds) {
+      deleteRepos(missingRepoIds);
+    }
+  }
+};
+
 export const storeRepos = async () => {
   userActionLogger.log('Storing repos to db');
 
@@ -100,6 +118,15 @@ export const storeRepos = async () => {
   const starredRepos = await getRepos();
 
   if (user) {
+    // check to see if user has repos in db already
+    const dbrepos = await readRepos(user.id);
+
+    // if user has repos in db, remove unstarred repos
+    if (dbrepos) {
+      await removeRepos(starredRepos, dbrepos);
+    }
+
+    // write repos to db
     await writeRepos(starredRepos, user.id);
   }
 };

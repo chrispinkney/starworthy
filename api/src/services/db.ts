@@ -69,3 +69,16 @@ export const writeRepos = (repos: Repo[], id: number) => {
     return undefined;
   }
 };
+
+export const deleteRepos = (repoIds: Repo[]) => {
+  try {
+    return db.repo.deleteMany({
+      where: {
+        repo_id: { in: repoIds },
+      },
+    });
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
+  }
+};
