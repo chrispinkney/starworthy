@@ -17,8 +17,9 @@ fastify.register(cors, {
 });
 
 fastify.register((app, _, done) => {
-  app.route(routes[0]); // stars handler
-  app.route(routes[1]); // user handler
+  app.route(routes[0]); // repo handler
+  app.route(routes[1]); // random handler
+  app.route(routes[2]); // user handler
   done();
 });
 

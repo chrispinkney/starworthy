@@ -4,7 +4,14 @@ import {
   errorLogger,
   userActionLogger,
 } from '../decorators/logger';
-import { readRepos, writeUser, writeRepos, findUser, deleteRepos } from './db';
+import {
+  readRepos,
+  writeUser,
+  writeRepos,
+  findUser,
+  deleteRepos,
+  findRandom,
+} from './db';
 import fetchUser from './github';
 
 export const getRepos = async (): Promise<GitHubRepo[]> => {
@@ -85,6 +92,16 @@ export const fetchRepos = async (): Promise<Repo[] | undefined> => {
   }
 
   return undefined;
+};
+
+export const fetchRandomRepo = async (): Promise<Repo> => {
+  performanceLogger.startNow();
+
+  const randomRepo = await findRandom();
+
+  performanceLogger.log();
+
+  return randomRepo;
 };
 
 export const removeRepos = async (

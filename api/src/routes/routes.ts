@@ -1,5 +1,5 @@
 import { HTTPMethods } from 'fastify';
-import getRepos from '../controllers/repos';
+import { getRepos, getRandom } from '../controllers/repos';
 import getUsername from '../controllers/user';
 
 type Routes = {
@@ -14,6 +14,12 @@ const routes: Routes[] = [
     method: 'GET',
     url: '/',
     handler: getRepos,
+    schema: {},
+  },
+  {
+    method: 'GET',
+    url: '/random',
+    handler: getRandom,
     schema: {},
   },
   {

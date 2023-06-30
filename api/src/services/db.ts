@@ -84,3 +84,19 @@ export const deleteRepos = async (repoIds: Repo[]): Promise<void> => {
     throw Error(e.message);
   }
 };
+
+export const findRandom = async (): Promise<Repo> => {
+  try {
+    const count = await db.repo.count();
+    const randomIndex = Math.floor(Math.random() * count);
+
+    const randomRepo = await db.repo.findFirst({
+      skip: randomIndex, // skip to the randomly generated index and retrieve the corresponding repo
+    });
+
+    return randomRepo;
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    throw Error(e.message);
+  }
+};

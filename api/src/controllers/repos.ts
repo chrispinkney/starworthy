@@ -1,7 +1,7 @@
-import { fetchRepos } from '../services/repos';
+import { fetchRepos, fetchRandomRepo } from '../services/repos';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
-const getRepos = async (): Promise<Repo[] | undefined> => {
+export const getRepos = async (): Promise<Repo[] | undefined> => {
   try {
     userActionLogger.log('user requested getUser');
     const repos = await fetchRepos();
@@ -13,4 +13,14 @@ const getRepos = async (): Promise<Repo[] | undefined> => {
   }
 };
 
-export default getRepos;
+export const getRandom = async (): Promise<Repo> => {
+  try {
+    userActionLogger.log('user requested getRandom');
+    const repos = await fetchRandomRepo();
+
+    return repos;
+  } catch (e) {
+    errorLogger.log(`Error in starsController: ${e.message}`);
+    throw Error(e.message);
+  }
+};
