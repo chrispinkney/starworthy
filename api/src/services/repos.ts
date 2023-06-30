@@ -99,7 +99,7 @@ export const removeRepos = async (
       (repoId: number) => !githubRepoIds.includes(repoId),
     );
 
-    if (missingRepoIds) {
+    if (missingRepoIds.length > 0) {
       deleteRepos(missingRepoIds);
     }
   }

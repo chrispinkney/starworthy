@@ -48,9 +48,9 @@ export const writeUser = async (username: string) => {
   }
 };
 
-export const writeRepos = (repos: Repo[], id: number) => {
+export const writeRepos = async (repos: Repo[], id: number) => {
   try {
-    return db.repo.createMany({
+    const reposToWrite = await db.repo.createMany({
       data: repos.map((repo) => ({
         repo_id: repo.repoId,
         name: repo.name,
@@ -64,21 +64,23 @@ export const writeRepos = (repos: Repo[], id: number) => {
       })),
       skipDuplicates: true,
     });
+
+    return reposToWrite;
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
   }
 };
 
-export const deleteRepos = (repoIds: Repo[]) => {
+export const deleteRepos = async (repoIds: Repo[]): Promise<void> => {
   try {
-    return db.repo.deleteMany({
+    await db.repo.deleteMany({
       where: {
         repo_id: { in: repoIds },
       },
     });
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
-    return undefined;
+    throw Error(e.message);
   }
 };
