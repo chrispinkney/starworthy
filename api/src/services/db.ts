@@ -19,8 +19,6 @@ export const findUser = async (username: string) => {
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
-  } finally {
-    await db.$disconnect();
   }
 };
 
@@ -34,8 +32,6 @@ export const readRepos = async (userId: number) => {
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
-  } finally {
-    await db.$disconnect();
   }
 };
 
@@ -49,14 +45,12 @@ export const writeUser = async (username: string) => {
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
-  } finally {
-    await db.$disconnect();
   }
 };
 
-export const writeRepos = async (repos: Repo[], id: number) => {
+export const writeRepos = (repos: Repo[], id: number) => {
   try {
-    return await db.repo.createMany({
+    return db.repo.createMany({
       data: repos.map((repo) => ({
         repo_id: repo.repoId,
         name: repo.name,
@@ -73,7 +67,5 @@ export const writeRepos = async (repos: Repo[], id: number) => {
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
-  } finally {
-    await db.$disconnect();
   }
 };
