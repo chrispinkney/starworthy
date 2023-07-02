@@ -19,8 +19,8 @@ export const getRepos = async (): Promise<GitHubRepo[]> => {
     auth: process.env.GITHUB,
   });
 
-  const perPage = 100;
   performanceLogger.startNow();
+  const perPage = 100;
 
   try {
     const res = await octokit.request('GET /user/starred', {
@@ -74,15 +74,16 @@ export const getRepos = async (): Promise<GitHubRepo[]> => {
     }
 
     performanceLogger.log();
+
     return starredRepos;
   } catch (e) {
-    errorLogger.log(`Error in stars service: ${e.message}`);
+    errorLogger.log(`Error in repo service: ${e.message}`);
     return [];
   }
 };
 
 export const fetchRepos = async (): Promise<Repo[] | undefined> => {
-  userActionLogger.log('Stars Controller');
+  performanceLogger.startNow();
 
   const username = await fetchUser();
   const user = await findUser(username);
@@ -90,6 +91,8 @@ export const fetchRepos = async (): Promise<Repo[] | undefined> => {
   if (user) {
     return readRepos(user.id);
   }
+
+  performanceLogger.log();
 
   return undefined;
 };
@@ -109,6 +112,8 @@ export const removeRepos = async (
   dbRepos: Repo[],
 ) => {
   if (dbRepos) {
+    performanceLogger.startNow();
+
     const vercelRepoIds = dbRepos.map((dbObj) => dbObj.repo_id);
     const githubRepoIds = githubRepos.map((dbObj) => dbObj.repoId);
 
@@ -119,11 +124,14 @@ export const removeRepos = async (
     if (missingRepoIds.length > 0) {
       deleteRepos(missingRepoIds);
     }
+
+    performanceLogger.log();
   }
 };
 
 export const storeRepos = async () => {
-  userActionLogger.log('Storing repos to db');
+  userActionLogger.log('Repo-DB refresh initialized');
+  performanceLogger.startNow();
 
   const username = await fetchUser();
   let user = await findUser(username);
@@ -146,6 +154,8 @@ export const storeRepos = async () => {
     // write repos to db
     await writeRepos(starredRepos, user.id);
   }
+
+  performanceLogger.log();
 };
 
 // store repos immediately upon start up if in production

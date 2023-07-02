@@ -21,7 +21,7 @@ const fetchUser = async (): Promise<string> => {
 
     return username;
   } catch (e) {
-    errorLogger.log(`Error in user service: ${e.message}`);
+    errorLogger.log(`Error in GitHub service: ${e.message}`);
     throw Error(e.message);
   }
 };

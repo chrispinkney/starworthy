@@ -9,7 +9,7 @@ export const getRepos = async (): Promise<Repo[] | undefined> => {
     return repos;
   } catch (e) {
     errorLogger.log(`Error in starsController: ${e.message}`);
-    return undefined;
+    throw Error(e.message);
   }
 };
 

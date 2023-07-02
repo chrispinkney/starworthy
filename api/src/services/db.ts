@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { errorLogger } from '../decorators/logger';
+import { errorLogger, performanceLogger } from '../decorators/logger';
 
 const db = new PrismaClient({
   datasources: {
@@ -11,9 +11,12 @@ const db = new PrismaClient({
 
 export const findUser = async (username: string) => {
   try {
+    performanceLogger.startNow();
     const user = await db.user.findUnique({
       where: { github_username: username },
     });
+
+    performanceLogger.log();
 
     return user;
   } catch (e) {
@@ -24,9 +27,13 @@ export const findUser = async (username: string) => {
 
 export const readRepos = async (userId: number) => {
   try {
+    performanceLogger.startNow();
+
     const repos = await db.repo.findMany({
       where: { userId },
     });
+
+    performanceLogger.log();
 
     return repos;
   } catch (e) {
@@ -37,9 +44,13 @@ export const readRepos = async (userId: number) => {
 
 export const writeUser = async (username: string) => {
   try {
+    performanceLogger.startNow();
+
     const userToCreate = await db.user.create({
       data: { github_username: username },
     });
+
+    performanceLogger.log();
 
     return userToCreate;
   } catch (e) {
@@ -50,6 +61,8 @@ export const writeUser = async (username: string) => {
 
 export const writeRepos = async (repos: Repo[], id: number) => {
   try {
+    performanceLogger.startNow();
+
     const reposToWrite = await db.repo.createMany({
       data: repos.map((repo) => ({
         repo_id: repo.repoId,
@@ -65,6 +78,8 @@ export const writeRepos = async (repos: Repo[], id: number) => {
       skipDuplicates: true,
     });
 
+    performanceLogger.log();
+
     return reposToWrite;
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
@@ -74,11 +89,15 @@ export const writeRepos = async (repos: Repo[], id: number) => {
 
 export const deleteRepos = async (repoIds: Repo[]): Promise<void> => {
   try {
+    performanceLogger.startNow();
+
     await db.repo.deleteMany({
       where: {
         repo_id: { in: repoIds },
       },
     });
+
+    performanceLogger.log();
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     throw Error(e.message);
@@ -87,12 +106,16 @@ export const deleteRepos = async (repoIds: Repo[]): Promise<void> => {
 
 export const findRandom = async (): Promise<Repo> => {
   try {
+    performanceLogger.startNow();
+
     const count = await db.repo.count();
     const randomIndex = Math.floor(Math.random() * count);
 
     const randomRepo = await db.repo.findFirst({
       skip: randomIndex, // skip to the randomly generated index and retrieve the corresponding repo
     });
+
+    performanceLogger.log();
 
     return randomRepo;
   } catch (e) {
