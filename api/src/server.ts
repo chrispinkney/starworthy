@@ -26,7 +26,7 @@ fastify.register((app, _, done) => {
 fastify.register(fastifyCron, {
   jobs: [
     {
-      cronTime: '*/10 * * * *', // every tenth minute
+      cronTime: '0 * * * *', // every hour
 
       onTick: async () => {
         await storeRepos();
