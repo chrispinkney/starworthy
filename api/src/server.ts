@@ -20,6 +20,8 @@ fastify.register((app, _, done) => {
   app.route(routes[0]); // repo handler
   app.route(routes[1]); // random handler
   app.route(routes[2]); // user handler
+  app.route(routes[3]); // unstar handler
+  app.route(routes[4]); // star handler
   done();
 });
 

@@ -130,6 +130,7 @@ export const writeRepos = async (repos: Repo[], id: number) => {
         url: repo.url,
         created_at: repo.createdAt !== null ? repo.createdAt : '',
         userId: id,
+        owner: repo.owner,
       })),
       skipDuplicates: true,
     });
@@ -140,6 +141,27 @@ export const writeRepos = async (repos: Repo[], id: number) => {
   } catch (e) {
     errorLogger.log(`Error in db service: ${e.message}`);
     return undefined;
+  }
+};
+
+export const deleteRepo = async (
+  owner: string,
+  repo: string,
+): Promise<void> => {
+  try {
+    performanceLogger.startNow();
+
+    await db.repo.deleteMany({
+      where: {
+        owner,
+        name: repo,
+      },
+    });
+
+    performanceLogger.log();
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    throw Error(e.message);
   }
 };
 

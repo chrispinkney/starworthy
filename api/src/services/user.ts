@@ -1,5 +1,5 @@
 import { errorLogger, performanceLogger } from '../decorators/logger';
-import fetchUser from './github';
+import { fetchUser } from './github';
 
 const getUsername = (): Promise<string> => {
   try {

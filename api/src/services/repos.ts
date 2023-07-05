@@ -11,8 +11,9 @@ import {
   findUser,
   deleteRepos,
   findRandom,
+  deleteRepo,
 } from './db';
-import fetchUser from './github';
+import { fetchUser, starRepo, unstarRepo } from './github';
 
 export const getRepos = async (): Promise<GitHubRepo[]> => {
   const octokit = new Octokit({
@@ -68,6 +69,7 @@ export const getRepos = async (): Promise<GitHubRepo[]> => {
             issues: repo.open_issues_count,
             url: repo.html_url,
             createdAt: repo.created_at,
+            owner: repo.owner.login,
           };
         });
       });
@@ -115,6 +117,19 @@ export const fetchRandomRepo = async (): Promise<Repo> => {
   performanceLogger.log();
 
   return randomRepo;
+};
+
+export const removeRepo = async (owner: string, repo: string) => {
+  if (owner && repo) {
+    performanceLogger.startNow();
+    // delete repo from github
+    unstarRepo(owner, repo);
+
+    // delete repo from db
+    deleteRepo(owner, repo);
+
+    performanceLogger.log();
+  }
 };
 
 export const removeRepos = async (
@@ -166,6 +181,19 @@ export const storeRepos = async () => {
   }
 
   performanceLogger.log();
+};
+
+export const addRepo = async (owner: string, repo: string) => {
+  if (owner && repo) {
+    performanceLogger.startNow();
+    // star repo on github
+    await starRepo(owner, repo);
+
+    // force update to db with newly starred repo
+    await storeRepos();
+
+    performanceLogger.log();
+  }
 };
 
 // store repos immediately upon start up if in production

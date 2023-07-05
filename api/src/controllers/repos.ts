@@ -1,5 +1,10 @@
 import { FastifyRequest } from 'fastify';
-import { fetchRepos, fetchRandomRepo } from '../services/repos';
+import {
+  fetchRepos,
+  fetchRandomRepo,
+  removeRepo,
+  addRepo,
+} from '../services/repos';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
 export const getRepos = async (
@@ -30,6 +35,34 @@ export const getRandom = async (): Promise<Repo> => {
     const repos = await fetchRandomRepo();
 
     return repos;
+  } catch (e) {
+    errorLogger.log(`Error in starsController: ${e.message}`);
+    throw Error(e.message);
+  }
+};
+
+export const deleteRepo = async (req: FastifyRequest): Promise<Repo> => {
+  try {
+    const { owner, repo } = req.query as {
+      owner: string;
+      repo: string;
+    };
+    userActionLogger.log('user requested deleteRepo');
+    await removeRepo(owner, repo);
+  } catch (e) {
+    errorLogger.log(`Error in starsController: ${e.message}`);
+    throw Error(e.message);
+  }
+};
+
+export const putRepo = async (req: FastifyRequest): Promise<Repo> => {
+  try {
+    const { owner, repo } = req.query as {
+      owner: string;
+      repo: string;
+    };
+    userActionLogger.log('user requested putRepo');
+    await addRepo(owner, repo);
   } catch (e) {
     errorLogger.log(`Error in starsController: ${e.message}`);
     throw Error(e.message);
