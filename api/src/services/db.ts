@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { errorLogger, performanceLogger } from '../decorators/logger';
+import FilterManager from '../filters/FilterManager';
+import FilterStrategy from '../filters/FilterStrategy';
+import LanguageFilter from '../filters/filters/LanguageFilter';
+import StarCountFilter from '../filters/filters/StarCountFilter';
+import ContributorsFilter from '../filters/filters/ContributorsFilter';
+import IssuesFilter from '../filters/filters/IssuesFilter';
+import PullRequestsFilter from '../filters/filters/PullRequestFilter';
 
 const db = new PrismaClient({
   datasources: {
@@ -25,12 +32,61 @@ export const findUser = async (username: string) => {
   }
 };
 
-export const readRepos = async (userId: number) => {
+export const readRepos = async (
+  userId: number,
+  language?: string,
+  stars?: number,
+  contributors?: number,
+  issues?: number,
+  prs?: number,
+) => {
   try {
     performanceLogger.startNow();
 
     const repos = await db.repo.findMany({
-      where: { userId },
+      where: { userId, language },
+    });
+
+    const filters: FilterStrategy[] = [];
+
+    if (language) {
+      filters.push(new LanguageFilter(language));
+    }
+
+    if (stars) {
+      filters.push(new StarCountFilter(stars));
+    }
+
+    if (contributors) {
+      filters.push(new ContributorsFilter(contributors));
+    }
+
+    if (issues) {
+      filters.push(new IssuesFilter(issues));
+    }
+
+    if (prs) {
+      filters.push(new PullRequestsFilter(prs));
+    }
+
+    const filterManager = new FilterManager(filters);
+    const filteredRepos = filterManager.applyFilters(repos);
+
+    performanceLogger.log();
+
+    return filteredRepos;
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
+  }
+};
+
+export const readReposByLanguage = async (userId: number, language: string) => {
+  try {
+    performanceLogger.startNow();
+
+    const repos = await db.repo.findMany({
+      where: { userId, language },
     });
 
     performanceLogger.log();

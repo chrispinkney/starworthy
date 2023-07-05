@@ -82,17 +82,27 @@ export const getRepos = async (): Promise<GitHubRepo[]> => {
   }
 };
 
-export const fetchRepos = async (): Promise<Repo[] | undefined> => {
+export const fetchRepos = async (
+  language?: string,
+  stars?: number,
+  contributors?: number,
+  issues?: number,
+  prs?: number,
+): Promise<Repo[] | undefined> => {
   performanceLogger.startNow();
 
   const username = await fetchUser();
   const user = await findUser(username);
 
-  if (user) {
-    return readRepos(user.id);
+  if (user && (language || stars || contributors || issues || prs)) {
+    performanceLogger.log();
+    return readRepos(user.id, language, stars, contributors, issues, prs);
   }
 
-  performanceLogger.log();
+  if (user) {
+    performanceLogger.log();
+    return readRepos(user.id);
+  }
 
   return undefined;
 };

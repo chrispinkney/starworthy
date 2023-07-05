@@ -1,11 +1,13 @@
-import { HTTPMethods } from 'fastify';
+import { FastifyRequest, HTTPMethods } from 'fastify';
 import { getRepos, getRandom } from '../controllers/repos';
 import getUsername from '../controllers/user';
 
 type Routes = {
   method: HTTPMethods;
   url: string;
-  handler: () => Promise<string | Repo[] | undefined>;
+  handler: (
+    req: FastifyRequest,
+  ) => Promise<string | number | Repo[] | undefined>;
   schema: object;
 };
 
