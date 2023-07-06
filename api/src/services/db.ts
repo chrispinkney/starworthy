@@ -44,7 +44,7 @@ export const readRepos = async (
     performanceLogger.startNow();
 
     const repos = await db.repo.findMany({
-      where: { userId, language },
+      where: { userId },
     });
 
     const filters: FilterStrategy[] = [];

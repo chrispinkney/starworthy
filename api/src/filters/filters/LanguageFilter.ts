@@ -8,7 +8,9 @@ class LanguageFilter implements FilterStrategy {
   }
 
   applyFilter(repos: Repo[]): Repo[] {
-    return repos.filter((repo) => repo.language === this.language);
+    return repos.filter((repo) => {
+      return repo.language.toUpperCase() === this.language.toUpperCase();
+    });
   }
 }
 
