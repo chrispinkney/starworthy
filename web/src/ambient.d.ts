@@ -1,4 +1,4 @@
-declare type Star = {
+declare type Repo = {
 	id: number;
 	name: string;
 	description: string;
@@ -6,4 +6,5 @@ declare type Star = {
 	language: string;
 	issues: number;
 	url: string;
+	owner: string;
 };

@@ -1,19 +1,20 @@
 <script lang="ts">
-	import RepoItem from '$lib/components/RepoItem/+page.svelte';
-	import RandomProjectCard from '$lib/components/RandomRepo/+page.svelte';
+	import RepoItem from '$lib/components/RepoItem/RepoItem.svelte';
+	import RandomProjectCard from '$lib/components/RandomRepo/RandomRepo.svelte';
+
 	export let data;
 
-	const { stars } = data;
+	const { stars, random } = data;
 </script>
 
 <div class="container mx-auto">
 	{#if stars && stars.length > 0}
-		<RandomProjectCard />
+		<RandomProjectCard {random} />
 		<div class="mb-8">
 			<h2 class="text-2xl font-bold mb-4">Starred Repositories</h2>
 			<ul class="space-y-4">
 				{#each stars as star (star.id)}
-					<RepoItem {star} key={star.id} />
+					<RepoItem repo={star} />
 				{/each}
 			</ul>
 		</div>
