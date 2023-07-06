@@ -1,5 +1,6 @@
-# Starworthy <img align="left" width="203" height="63" src=web\static\starworthy.png>
-<br/>
+<h1 align="center">
+	<img width="203" height="63" src="web\static\starworthy.png">
+</h1>
 
 [![js-airbnb/prettier-style](https://img.shields.io/badge/code%20style-airbnb%2Fprettier-blue)](https://github.com/airbnb/javascript)
 ![Node.js CI](https://github.com/chrispinkney/starworthy/actions/workflows/docker.yml/badge.svg)
