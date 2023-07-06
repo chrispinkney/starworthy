@@ -1,25 +1,25 @@
 <script lang="ts">
+	import RepoItem from '$lib/components/RepoItem/+page.svelte';
+
 	export let data;
+
 	const { stars } = data;
 </script>
 
-<h1>Stars</h1>
-<ul>
-	{#each stars as star}
-		<li>{star.name}</li>
-		<li>{star.description ? star.description : 'Project Has No Description'}</li>
-		<li><a href={star.url}>Link</a></li>
-		<hr />
-	{/each}
-</ul>
+<div class="container mx-auto">
+	{#if stars && stars.length > 0}
+		<div class="mb-8">
+			<h2 class="text-2xl font-bold mb-4">Starred Repositories</h2>
+			<ul class="space-y-4">
+				{#each stars as star (star.id)}
+					<RepoItem {star} key={star.id} />
+				{/each}
+			</ul>
+		</div>
+	{:else}
+		<p>Loading...</p>
+	{/if}
+</div>
 
-<style lang="postcss">
-	:global(html) {
-		background-color: theme(colors.zinc.200);
-	}
-
-	hr {
-		background-color: red;
-		border-top: 2px dashed #8c8b8b;
-	}
+<style>
 </style>
