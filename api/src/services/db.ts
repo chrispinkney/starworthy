@@ -45,6 +45,7 @@ export const readRepos = async (
 
     const repos = await db.repo.findMany({
       where: { userId },
+      orderBy: { stars: 'desc' },
     });
 
     const filters: FilterStrategy[] = [];
