@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img width="203" height="63" src="web\static\starworthy.png">
+	<img width="430" height="130" src="web\static\starworthy.png">
 </h1>
 
 [![js-airbnb/prettier-style](https://img.shields.io/badge/code%20style-airbnb%2Fprettier-blue)](https://github.com/airbnb/javascript)

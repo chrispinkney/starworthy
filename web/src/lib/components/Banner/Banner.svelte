@@ -3,7 +3,13 @@
 
 <header class="flex relative">
 	<div class="max-w-screen-xl mx-auto px-8 flex-auto">
-		<img src="/starworthy.svg" alt="site logo" class="logo mx-auto max-w-full h-auto" />
+		<img
+			src="/starworthy.svg"
+			width="430"
+			height="130"
+			alt="site logo"
+			class="logo mx-auto max-w-full h-auto"
+		/>
 	</div>
 	<div class="absolute top-3 right-3">
 		<a href="https://github.com/chrispinkney/starworthy">
