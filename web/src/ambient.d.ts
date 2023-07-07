@@ -6,5 +6,6 @@ declare type Repo = {
 	language: string;
 	issues: number;
 	url: string;
+	created_at: string;
 	owner: string;
 };
