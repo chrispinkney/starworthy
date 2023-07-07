@@ -123,10 +123,10 @@ export const removeRepo = async (owner: string, repo: string) => {
   if (owner && repo) {
     performanceLogger.startNow();
     // delete repo from github
-    unstarRepo(owner, repo);
+    await unstarRepo(owner, repo);
 
     // delete repo from db
-    deleteRepo(owner, repo);
+    await deleteRepo(owner, repo);
 
     performanceLogger.log();
   }
@@ -139,12 +139,14 @@ export const removeRepos = async (
   if (dbRepos) {
     performanceLogger.startNow();
 
-    const vercelRepoIds = dbRepos.map((dbObj) => dbObj.repo_id);
-    const githubRepoIds = githubRepos.map((dbObj) => dbObj.repoId);
+    const githubRepoIds = githubRepos.map((repo) => repo.repoId);
 
-    const missingRepoIds = vercelRepoIds.filter(
-      (repoId: number) => !githubRepoIds.includes(repoId),
-    );
+    const missingRepoIds = dbRepos.reduce((acc, repo) => {
+      if (!githubRepoIds.includes(repo.repo_id)) {
+        acc.push(repo.repo_id);
+      }
+      return acc;
+    }, []);
 
     if (missingRepoIds.length > 0) {
       deleteRepos(missingRepoIds);
