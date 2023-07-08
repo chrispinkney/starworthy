@@ -1,6 +1,5 @@
 <script lang="ts">
 	import RepoItem from '$lib/components/RepoItem/RepoItem.svelte';
-	import RandomProjectCard from '$lib/components/RandomRepo/RandomRepo.svelte';
 
 	export let data;
 
@@ -9,7 +8,6 @@
 
 <div class="container mx-auto">
 	{#if stars && stars.length > 0}
-		<RandomProjectCard />
 		<div class="mb-8">
 			<h2 class="text-2xl font-bold mb-4">Starred Repositories</h2>
 			<ul class="space-y-4">
