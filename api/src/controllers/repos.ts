@@ -4,6 +4,7 @@ import {
   fetchRandomRepo,
   removeRepo,
   addRepo,
+  fetchLanguages,
 } from '../services/repos';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
@@ -33,6 +34,18 @@ export const getRandom = async (): Promise<Repo> => {
   try {
     userActionLogger.log('user requested getRandom');
     const repos = await fetchRandomRepo();
+
+    return repos;
+  } catch (e) {
+    errorLogger.log(`Error in starsController: ${e.message}`);
+    throw Error(e.message);
+  }
+};
+
+export const getLanguages = async (): Promise<Repo> => {
+  try {
+    userActionLogger.log('user requested getLanguages');
+    const repos = await fetchLanguages();
 
     return repos;
   } catch (e) {

@@ -99,6 +99,30 @@ export const readReposByLanguage = async (userId: number, language: string) => {
   }
 };
 
+export const readLanguages = async (userId: number) => {
+  try {
+    performanceLogger.startNow();
+
+    const distinctLanguages = await db.repo.findMany({
+      where: {
+        userId,
+        language: { not: '' },
+      },
+      select: {
+        language: true,
+      },
+      distinct: ['language'],
+    });
+
+    performanceLogger.log();
+
+    return distinctLanguages.map((repo) => repo.language);
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
+  }
+};
+
 export const writeUser = async (username: string) => {
   try {
     performanceLogger.startNow();

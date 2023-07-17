@@ -12,6 +12,7 @@ import {
   deleteRepos,
   findRandom,
   deleteRepo,
+  readLanguages,
 } from './db';
 import { fetchUser, starRepo, unstarRepo } from './github';
 
@@ -117,6 +118,23 @@ export const fetchRandomRepo = async (): Promise<Repo> => {
   performanceLogger.log();
 
   return randomRepo;
+};
+
+export const fetchLanguages = async (): Promise<Repo> => {
+  performanceLogger.startNow();
+
+  const username = await fetchUser();
+  const user = await findUser(username);
+
+  let languages;
+
+  if (user) {
+    languages = await readLanguages(user?.id);
+  }
+
+  performanceLogger.log();
+
+  return languages;
 };
 
 export const removeRepo = async (owner: string, repo: string) => {

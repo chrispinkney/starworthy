@@ -17,11 +17,12 @@ fastify.register(cors, {
 });
 
 fastify.register((app, _, done) => {
-  app.route(routes[0]); // repo handler
-  app.route(routes[1]); // random handler
-  app.route(routes[2]); // user handler
-  app.route(routes[3]); // unstar handler
-  app.route(routes[4]); // star handler
+  app.route(routes[0]); // getRepos handler
+  app.route(routes[1]); // getRandom handler
+  app.route(routes[2]); // getUsername handler
+  app.route(routes[3]); // getLanguages handler
+  app.route(routes[4]); // putRepo handler
+  app.route(routes[5]); // deleteRepo handler
   done();
 });
 
