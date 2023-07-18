@@ -10,9 +10,9 @@
 	export let data: LayoutData;
 	$: ({ random } = data);
 
-	function rerunLoadFunction() {
+	const rerunLoadFunction = () => {
 		invalidate('random');
-	}
+	};
 </script>
 
 <Banner />
