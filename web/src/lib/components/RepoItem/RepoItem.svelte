@@ -28,6 +28,11 @@
 		</div>
 
 		<div class="flex items-center space-x-2">
+			<span class="text-sm">👥Contributors:</span>
+			<span class="text-sm font-bold">{repo.contributors}</span>
+		</div>
+
+		<div class="flex items-center space-x-2">
 			<span class="text-sm">❗Issues:</span>
 			<span class="text-sm font-bold"
 				>{new Intl.NumberFormat('en-US', {
@@ -35,6 +40,19 @@
 					notation: 'compact'
 				}).format(repo.issues)}</span
 			>
+		</div>
+
+		<div class="flex items-center space-x-2">
+			<span class="text-sm"
+				><img
+					src="/pr.svg"
+					width="14px"
+					height="14px"
+					alt="pull requests"
+					class="logo mx-auto max-w-full h-auto inline"
+				/>Pull Requests:</span
+			>
+			<span class="text-sm font-bold">{repo.pullRequests}</span>
 		</div>
 
 		{#if repo.language}

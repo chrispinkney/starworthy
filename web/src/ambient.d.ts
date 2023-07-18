@@ -8,4 +8,6 @@ declare type Repo = {
 	url: string;
 	created_at: string;
 	owner: string;
+	contributors: number;
+	pullRequests: number;
 };
