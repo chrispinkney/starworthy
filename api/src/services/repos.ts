@@ -1,4 +1,3 @@
-import { Octokit } from 'octokit';
 import {
   performanceLogger,
   errorLogger,
@@ -14,13 +13,16 @@ import {
   deleteRepo,
   readLanguages,
 } from './db';
-import { fetchUser, starRepo, unstarRepo } from './github';
+import {
+  octokit,
+  fetchContributors,
+  fetchUser,
+  starRepo,
+  unstarRepo,
+  fetchPullRequests,
+} from './github';
 
 export const getRepos = async (): Promise<GitHubRepo[]> => {
-  const octokit = new Octokit({
-    auth: process.env.GITHUB,
-  });
-
   performanceLogger.startNow();
   const perPage = 100;
 
@@ -71,10 +73,30 @@ export const getRepos = async (): Promise<GitHubRepo[]> => {
             url: repo.html_url,
             createdAt: repo.created_at,
             owner: repo.owner.login,
+            contributors: 0,
+            pullRequests: 0,
           };
         });
       });
     }
+
+    const contributors = Promise.all(
+      starredRepos.map((repo) => fetchContributors(repo.owner, repo.name)),
+    );
+
+    const totalPullRequests = Promise.all(
+      starredRepos.map((repo) => fetchPullRequests(repo.owner, repo.name)),
+    );
+
+    const totalResults = await Promise.all([contributors, totalPullRequests]);
+
+    starredRepos.forEach((repo, i) => {
+      // eslint-disable-next-line no-param-reassign
+      repo.contributors = totalResults[0][i];
+
+      // eslint-disable-next-line no-param-reassign
+      repo.pullRequests = totalResults[1][i];
+    });
 
     performanceLogger.log();
 

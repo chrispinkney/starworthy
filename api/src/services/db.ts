@@ -156,6 +156,8 @@ export const writeRepos = async (repos: Repo[], id: number) => {
         created_at: repo.createdAt !== null ? repo.createdAt : '',
         userId: id,
         owner: repo.owner,
+        contributors: repo.contributors,
+        pullRequests: repo.pullRequests,
       })),
       skipDuplicates: true,
     });

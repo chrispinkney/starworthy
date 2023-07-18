@@ -13,6 +13,8 @@ declare type GitHubRepo = {
   url: string;
   createdAt: string | null;
   owner: string;
+  contributors: number;
+  pullRequests: number;
 };
 
 declare type UserId = {
