@@ -50,7 +50,7 @@ const routes: Routes[] = [
   },
   {
     method: 'DELETE',
-    url: '/',
+    url: '/delete',
     handler: deleteRepo,
     schema: {},
   },
