@@ -1,7 +1,7 @@
 <script>
 </script>
 
-<header class="flex relative">
+<header class="flex relative z-10">
 	<div class="max-w-screen-xl mx-auto px-8 flex-auto">
 		<img
 			src="/starworthy.svg"
