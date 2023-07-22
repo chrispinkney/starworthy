@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
 	import RepoItem from '$lib/components/RepoItem/RepoItem.svelte';
+	import { URLBuilder } from '$lib/utils/urlbuilder';
 
 	export let language: null | string;
+	export let minStars: null | number;
 	export let contributors: null | number;
 	export let issues: null | number;
+	export let pullRequests: null | number;
 
 	const url = env.PUBLIC_API_URL;
 
@@ -12,19 +15,13 @@
 	let timer: NodeJS.Timeout;
 
 	const getFilteredRepos = async (
-		language: null | string,
-		contributors: null | number,
-		issues: null | number
+		language?: null | string,
+		minStars?: null | number,
+		contributors?: null | number,
+		issues?: null | number,
+		pullRequests?: null | number
 	) => {
-		const languageStr = `language=${language}`;
-		const contributorsStr = `contributors=${contributors}`;
-		const issuesStr = `issues=${issues}`;
-
-		let urlString = '?';
-
-		if (language) urlString += `${languageStr}&`;
-		if (contributors) urlString += `${contributorsStr}&`;
-		if (issues) urlString += `${issuesStr}&`;
+		const urlString = URLBuilder(language, minStars, contributors, issues, pullRequests);
 
 		try {
 			const res = await fetch(url ? `${url}/${urlString}` : `http://127.0.0.1:7000/${urlString}`);
@@ -38,16 +35,18 @@
 
 	const debounce = (
 		language: null | string,
+		minStars: null | number,
 		contributors: null | number,
-		issues: null | number
+		issues: null | number,
+		pullRequests: null | number
 	) => {
 		clearTimeout(timer);
 		timer = setTimeout(() => {
-			repos = getFilteredRepos(language, contributors, issues);
+			repos = getFilteredRepos(language, minStars, contributors, issues, pullRequests);
 		}, 750);
 	};
 
-	$: debounce(language, contributors, issues);
+	$: debounce(language, minStars, contributors, issues, pullRequests);
 </script>
 
 <h2 class="text-2xl font-bold mb-4">Filtered Repositories</h2>
