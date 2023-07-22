@@ -88,6 +88,7 @@ export const readReposByLanguage = async (userId: number, language: string) => {
 
     const repos = await db.repo.findMany({
       where: { userId, language },
+      orderBy: { stars: 'desc' },
     });
 
     performanceLogger.log();
@@ -112,6 +113,7 @@ export const readLanguages = async (userId: number) => {
         language: true,
       },
       distinct: ['language'],
+      orderBy: { stars: 'desc' },
     });
 
     performanceLogger.log();
