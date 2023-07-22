@@ -113,7 +113,7 @@ export const readLanguages = async (userId: number) => {
         language: true,
       },
       distinct: ['language'],
-      orderBy: { stars: 'desc' },
+      orderBy: { language: 'asc' },
     });
 
     performanceLogger.log();
