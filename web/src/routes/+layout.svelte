@@ -8,7 +8,7 @@
 	import '../app.css';
 
 	export let data: LayoutData;
-	$: ({ random } = data);
+	$: ({ random, username, count } = data);
 
 	const rerunLoadFunction = () => {
 		invalidate('random');
@@ -16,6 +16,18 @@
 </script>
 
 <Banner />
+
+<!-- User information -->
+{#if username && count}
+	<div class="container mx-auto mb-2">
+		<div class="flex">
+			<h1 class="text-3xl font-bold mt-4">
+				<span class="text-orange">{username?.username}</span> has
+				<span class="text-orange">{count?.count}</span> starred repos
+			</h1>
+		</div>
+	</div>
+{/if}
 
 <!-- Random Repo -->
 {#if random}
