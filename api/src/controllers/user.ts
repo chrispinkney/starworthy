@@ -1,11 +1,11 @@
 import getUsername from '../services/user';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
-const getUser = async (): Promise<string> => {
+const getUser = async (): Promise<{ username: string }> => {
   try {
     userActionLogger.log('User requested getUsername');
 
-    const username: string = await getUsername();
+    const username: { username: string } = await getUsername();
 
     return username;
   } catch (e) {

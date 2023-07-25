@@ -21,7 +21,7 @@ fastify.register((app, _, done) => {
   app.route(routes[1]); // getRandom handler
   app.route(routes[2]); // getUsername handler
   app.route(routes[3]); // getLanguages handler
-  app.route(routes[4]); // putRepo handler
+  app.route(routes[4]); // getReposCount handler
   app.route(routes[5]); // deleteRepo handler
   done();
 });

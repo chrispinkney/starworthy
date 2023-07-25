@@ -1,8 +1,4 @@
-import {
-  performanceLogger,
-  errorLogger,
-  userActionLogger,
-} from '../decorators/logger';
+import { performanceLogger, userActionLogger } from '../decorators/logger';
 import {
   readRepos,
   writeUser,
@@ -12,100 +8,9 @@ import {
   findRandom,
   deleteRepo,
   readLanguages,
+  readReposCount,
 } from './db';
-import {
-  octokit,
-  fetchContributors,
-  fetchUser,
-  starRepo,
-  unstarRepo,
-  fetchPullRequests,
-} from './github';
-
-export const getRepos = async (): Promise<GitHubRepo[]> => {
-  performanceLogger.startNow();
-  const perPage = 100;
-
-  try {
-    const res = await octokit.request('GET /user/starred', {
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-      per_page: 1,
-    });
-
-    const regex = /&page=[0-9]*/g;
-    const pageQuery = res.headers.link?.match(regex);
-
-    let starredRepos: GitHubRepo[] = [];
-
-    if (pageQuery?.length === 2) {
-      const starredCount = parseInt(
-        pageQuery[1].slice(pageQuery[1].indexOf('=') + 1),
-        10,
-      );
-
-      const numberOfTimes = Math.floor(starredCount / perPage) + 1;
-
-      const promises = await Promise.all(
-        [...Array(numberOfTimes).keys()].map((i) =>
-          octokit.request('GET /user/starred', {
-            headers: {
-              'X-GitHub-Api-Version': '2022-11-28',
-            },
-            per_page: perPage,
-            page: i + 1,
-          }),
-        ),
-      );
-
-      starredRepos = new Array(starredCount);
-
-      promises.forEach((repoSet, j) => {
-        repoSet.data.forEach((repo, i) => {
-          starredRepos[(j * perPage + i) as number] = {
-            repoId: repo.id,
-            name: repo.name,
-            description: repo.description,
-            stars: repo.stargazers_count,
-            language: repo.language,
-            issues: repo.open_issues_count,
-            url: repo.html_url,
-            createdAt: repo.created_at,
-            owner: repo.owner.login,
-            contributors: 0,
-            pullRequests: 0,
-          };
-        });
-      });
-    }
-
-    const contributors = Promise.all(
-      starredRepos.map((repo) => fetchContributors(repo.owner, repo.name)),
-    );
-
-    const totalPullRequests = Promise.all(
-      starredRepos.map((repo) => fetchPullRequests(repo.owner, repo.name)),
-    );
-
-    const totalResults = await Promise.all([contributors, totalPullRequests]);
-
-    starredRepos.forEach((repo, i) => {
-      // eslint-disable-next-line no-param-reassign
-      repo.contributors = totalResults[0][i];
-
-      // eslint-disable-next-line no-param-reassign
-      repo.pullRequests = totalResults[1][i];
-    });
-
-    performanceLogger.log();
-
-    return starredRepos;
-  } catch (e) {
-    errorLogger.log(`Error in repo service: ${e.message}`);
-    return [];
-  }
-};
+import { fetchUser, unstarRepo, getRepos } from './github';
 
 export const fetchRepos = async (
   language?: string,
@@ -157,6 +62,23 @@ export const fetchLanguages = async (): Promise<Repo> => {
   performanceLogger.log();
 
   return languages;
+};
+
+export const fetchReposCount = async (): Promise<Repo> => {
+  performanceLogger.startNow();
+
+  const username = await fetchUser();
+  const user = await findUser(username);
+
+  let count;
+
+  if (user) {
+    count = await readReposCount(user?.id);
+  }
+
+  performanceLogger.log();
+
+  return count;
 };
 
 export const removeRepo = async (owner: string, repo: string) => {
@@ -223,19 +145,6 @@ export const storeRepos = async () => {
   }
 
   performanceLogger.log();
-};
-
-export const addRepo = async (owner: string, repo: string) => {
-  if (owner && repo) {
-    performanceLogger.startNow();
-    // star repo on github
-    await starRepo(owner, repo);
-
-    // force update to db with newly starred repo
-    await storeRepos();
-
-    performanceLogger.log();
-  }
 };
 
 // store repos immediately upon start up if in production

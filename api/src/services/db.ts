@@ -125,6 +125,25 @@ export const readLanguages = async (userId: number) => {
   }
 };
 
+export const readReposCount = async (userId: number) => {
+  try {
+    performanceLogger.startNow();
+
+    const count = await db.repo.count({
+      where: {
+        userId,
+      },
+    });
+
+    performanceLogger.log();
+
+    return { count };
+  } catch (e) {
+    errorLogger.log(`Error in db service: ${e.message}`);
+    return undefined;
+  }
+};
+
 export const writeUser = async (username: string) => {
   try {
     performanceLogger.startNow();

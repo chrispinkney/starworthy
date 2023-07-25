@@ -3,8 +3,8 @@ import {
   getRepos,
   getRandom,
   deleteRepo,
-  putRepo,
   getLanguages,
+  getReposCount,
 } from '../controllers/repos';
 import getUsername from '../controllers/user';
 
@@ -43,9 +43,9 @@ const routes: Routes[] = [
     schema: {},
   },
   {
-    method: 'PUT',
-    url: '/',
-    handler: putRepo,
+    method: 'GET',
+    url: '/count',
+    handler: getReposCount,
     schema: {},
   },
   {

@@ -3,8 +3,8 @@ import {
   fetchRepos,
   fetchRandomRepo,
   removeRepo,
-  addRepo,
   fetchLanguages,
+  fetchReposCount,
 } from '../services/repos';
 import { errorLogger, userActionLogger } from '../decorators/logger';
 
@@ -54,6 +54,18 @@ export const getLanguages = async (): Promise<Repo> => {
   }
 };
 
+export const getReposCount = async (): Promise<Repo> => {
+  try {
+    userActionLogger.log('user requested getReposCount');
+    const repos = await fetchReposCount();
+
+    return repos;
+  } catch (e) {
+    errorLogger.log(`Error in starsController: ${e.message}`);
+    throw Error(e.message);
+  }
+};
+
 export const deleteRepo = async (req: FastifyRequest): Promise<Repo> => {
   try {
     const { owner, repo } = req.query as {
@@ -62,20 +74,6 @@ export const deleteRepo = async (req: FastifyRequest): Promise<Repo> => {
     };
     userActionLogger.log('user requested deleteRepo');
     await removeRepo(owner, repo);
-  } catch (e) {
-    errorLogger.log(`Error in starsController: ${e.message}`);
-    throw Error(e.message);
-  }
-};
-
-export const putRepo = async (req: FastifyRequest): Promise<Repo> => {
-  try {
-    const { owner, repo } = req.query as {
-      owner: string;
-      repo: string;
-    };
-    userActionLogger.log('user requested putRepo');
-    await addRepo(owner, repo);
   } catch (e) {
     errorLogger.log(`Error in starsController: ${e.message}`);
     throw Error(e.message);
