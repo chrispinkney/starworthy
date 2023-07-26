@@ -1,5 +1,9 @@
 import FilterStrategy from './FilterStrategy';
 
+/*
+A FilterManager is created and desired filters are specified to
+constructor before being applied. see src\services\db for implementation details
+*/
 class FilterManager {
   private filters: FilterStrategy[];
 
@@ -7,6 +11,7 @@ class FilterManager {
     this.filters = filters;
   }
 
+  // applies all given filters passed in to the constructor, see /filters
   applyFilters(repos: Repo[]): Repo[] {
     let filteredRepos = [...repos];
 

@@ -50,6 +50,7 @@ export const readRepos = async (
 
     const filters: FilterStrategy[] = [];
 
+    // build filters based on passed in args from request's params
     if (language) {
       filters.push(new LanguageFilter(language));
     }
